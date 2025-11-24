@@ -1,0 +1,3 @@
+sample,condition,fastq
+test_native_1,native,/path/to/test/native_1.fastq.gz
+test_ivt_1,ivt,/path/to/test/ivt_1.fastq.gz

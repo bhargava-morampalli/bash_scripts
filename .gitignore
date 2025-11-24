@@ -1,0 +1,46 @@
+# Nextflow
+.nextflow*
+work/
+results/
+.nextflow.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+testing/
+test-results/
+*.test
+
+# Singularity
+singularity/
+
+# Conda
+.conda/
+
+# Docker
+.docker/
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+tmp/
+temp/
