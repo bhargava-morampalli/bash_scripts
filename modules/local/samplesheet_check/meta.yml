@@ -1,0 +1,37 @@
+name: samplesheet_check
+description: Validate and parse input samplesheet for RNA modification coverage benchmarking pipeline
+keywords:
+  - validation
+  - samplesheet
+  - csv
+  - quality control
+  - input
+tools:
+  - python:
+      description: Python scripting language
+      homepage: https://www.python.org/
+      documentation: https://docs.python.org/
+      tool_dev_url: https://github.com/python/cpython
+      licence: ["PSF"]
+
+input:
+  - samplesheet:
+      type: file
+      description: Input samplesheet in CSV format
+      pattern: "*.csv"
+
+output:
+  - csv:
+      type: file
+      description: Validated samplesheet in CSV format
+      pattern: "*.csv"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@bhargava-morampalli"
+
+maintainers:
+  - "@bhargava-morampalli"

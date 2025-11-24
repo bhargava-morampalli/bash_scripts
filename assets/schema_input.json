@@ -1,0 +1,105 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "https://raw.githubusercontent.com/bhargava-morampalli/bash_scripts/master/assets/schema_input.json",
+    "title": "RNA Modification Coverage Benchmarking Pipeline - Input Samplesheet Schema",
+    "description": "Schema for the input samplesheet used by the RNA modification coverage benchmarking pipeline",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "sample": {
+                "type": "string",
+                "pattern": "^\\S+$",
+                "errorMessage": "Sample name must be provided and cannot contain spaces",
+                "meta": ["id"]
+            },
+            "condition": {
+                "type": "string",
+                "pattern": "^(native|ivt)$",
+                "errorMessage": "Condition must be either 'native' or 'ivt'",
+                "meta": ["condition"]
+            },
+            "fastq": {
+                "type": "string",
+                "format": "file-path",
+                "pattern": "^\\S+\\.(fastq|fq)(\\.gz)?$",
+                "errorMessage": "FASTQ file path must be provided and must have extension .fastq, .fq, .fastq.gz, or .fq.gz"
+            },
+            "genome_size": {
+                "type": "string",
+                "pattern": "^[0-9]+(\\.[0-9]+)?([kKmMgG]([bB][pP]?)?)?$",
+                "errorMessage": "Genome size must be a number optionally followed by k/K, m/M, or g/G (with optional bp/b suffix). Examples: 4500000, 4.5m, 4.5Mbp"
+            },
+            "min_length": {
+                "type": "integer",
+                "minimum": 0,
+                "errorMessage": "Minimum read length must be a positive integer"
+            },
+            "length_weight": {
+                "type": "number",
+                "minimum": 0,
+                "errorMessage": "Length weight must be a non-negative number"
+            },
+            "mean_q_weight": {
+                "type": "number",
+                "minimum": 0,
+                "errorMessage": "Mean quality weight must be a non-negative number"
+            },
+            "window_q_weight": {
+                "type": "number",
+                "minimum": 0,
+                "errorMessage": "Window quality weight must be a non-negative number"
+            },
+            "keep_percent": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 100,
+                "errorMessage": "Keep percent must be between 0 and 100"
+            },
+            "min_mean_q": {
+                "type": "number",
+                "minimum": 0,
+                "errorMessage": "Minimum mean quality must be a non-negative number"
+            },
+            "min_window_q": {
+                "type": "number",
+                "minimum": 0,
+                "errorMessage": "Minimum window quality must be a non-negative number"
+            },
+            "window_size": {
+                "type": "integer",
+                "minimum": 1,
+                "errorMessage": "Window size must be a positive integer"
+            },
+            "trim": {
+                "type": "string",
+                "pattern": "^(true|false|yes|no|1|0)$",
+                "errorMessage": "Trim must be one of: true, false, yes, no, 1, or 0"
+            },
+            "split": {
+                "type": "integer",
+                "minimum": 1,
+                "errorMessage": "Split must be a positive integer"
+            },
+            "assembly": {
+                "type": "string",
+                "format": "file-path",
+                "pattern": "^\\S+\\.(fasta|fa|fna)(\\.gz)?$",
+                "errorMessage": "Assembly file must have extension .fasta, .fa, .fna, or gzipped versions"
+            },
+            "illumina_1": {
+                "type": "string",
+                "format": "file-path",
+                "pattern": "^\\S+\\.(fastq|fq)(\\.gz)?$",
+                "errorMessage": "Illumina R1 file must have extension .fastq, .fq, .fastq.gz, or .fq.gz"
+            },
+            "illumina_2": {
+                "type": "string",
+                "format": "file-path",
+                "pattern": "^\\S+\\.(fastq|fq)(\\.gz)?$",
+                "errorMessage": "Illumina R2 file must have extension .fastq, .fq, .fastq.gz, or .fq.gz"
+            }
+        },
+        "required": ["sample", "condition", "fastq"]
+    }
+}

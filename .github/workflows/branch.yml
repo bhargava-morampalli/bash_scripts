@@ -1,0 +1,25 @@
+name: Branch protection
+# This workflow is triggered on PRs to master branch
+# It ensures that PRs to protected branches only come from dev or patch release branches
+
+on:
+  pull_request_target:
+    branches:
+      - master
+      - main
+
+jobs:
+  branch-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PRs
+        if: github.repository == 'bhargava-morampalli/bash_scripts'
+        run: |
+          { [[ ${{github.event.pull_request.head.repo.full_name }} == bhargava-morampalli/bash_scripts ]] && [[ $GITHUB_HEAD_REF == "dev" ]]; } || [[ $GITHUB_HEAD_REF == "patch" ]]
+
+      - name: Status report
+        if: failure()
+        run: |
+          echo "# ERROR: You should not be pushing to master directly!" >> $GITHUB_STEP_SUMMARY
+          echo "Rather, please open a pull request from dev -> master instead." >> $GITHUB_STEP_SUMMARY
+          false  # Force failure

@@ -1,0 +1,61 @@
+name: filtlong
+description: Quality filtering tool for long read sequencing data
+keywords:
+  - filtering
+  - quality control
+  - long reads
+  - nanopore
+  - pacbio
+  - coverage
+  - target bases
+tools:
+  - filtlong:
+      description: Filtlong is a tool for filtering long reads by quality. It can take a set of long reads and produce a smaller, better subset.
+      homepage: https://github.com/rrwick/Filtlong
+      documentation: https://github.com/rrwick/Filtlong/blob/main/README.md
+      tool_dev_url: https://github.com/rrwick/Filtlong
+      licence: ["GPL v3"]
+
+input:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information and filtlong parameters
+        e.g. [ id:'test', condition:'native', coverage:'5', genome_size:4500000, min_length:500, length_weight:10 ]
+  - reads:
+      type: file
+      description: FASTQ file (can be gzipped)
+      pattern: "*.{fastq,fq,fastq.gz,fq.gz}"
+  - assembly:
+      type: file
+      description: Optional reference assembly in FASTA format for quality scoring
+      pattern: "*.{fasta,fa,fna,fasta.gz,fa.gz,fna.gz}"
+  - illumina_1:
+      type: file
+      description: Optional Illumina R1 reads for quality calibration
+      pattern: "*.{fastq,fq,fastq.gz,fq.gz}"
+  - illumina_2:
+      type: file
+      description: Optional Illumina R2 reads for quality calibration
+      pattern: "*.{fastq,fq,fastq.gz,fq.gz}"
+
+output:
+  - meta:
+      type: map
+      description: |
+        Groovy Map containing sample information
+        e.g. [ id:'test', condition:'native', coverage:'5' ]
+  - reads:
+      type: file
+      description: Filtered FASTQ file (gzipped)
+      pattern: "*.fastq.gz"
+  - versions:
+      type: file
+      description: File containing software versions
+      pattern: "versions.yml"
+
+authors:
+  - "@bhargava-morampalli"
+
+maintainers:
+  - "@bhargava-morampalli"
