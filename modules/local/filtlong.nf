@@ -8,7 +8,7 @@ process FILTLONG {
         'biocontainers/filtlong:0.2.1--h9a82719_1' }"
 
     input:
-    tuple val(meta), path(reads)
+    tuple val(meta), path(reads), path(assembly), path(illumina_1), path(illumina_2)
 
     output:
     tuple val(meta), path("*.fastq.gz"), emit: reads
@@ -18,38 +18,46 @@ process FILTLONG {
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args ?: ''
     def prefix = task.ext.prefix ?: "${meta.id}"
 
+    // Build filtlong command dynamically based on meta parameters
+    def filtlong_options = []
+
     // Calculate target bases based on genome size and coverage
-    def target_bases = ""
     if (meta.genome_size && meta.coverage) {
-        // Parse genome size (could be like "4.5m" or just a number)
-        def size_str = meta.genome_size.toString()
-        def multiplier = 1
-        def size_value = size_str
-
-        if (size_str =~ /[kK]$/) {
-            multiplier = 1000
-            size_value = size_str.replaceAll(/[kK]$/, '')
-        } else if (size_str =~ /[mM]$/) {
-            multiplier = 1000000
-            size_value = size_str.replaceAll(/[mM]$/, '')
-        } else if (size_str =~ /[gG]$/) {
-            multiplier = 1000000000
-            size_value = size_str.replaceAll(/[gG]$/, '')
-        }
-
-        def genome_bases = size_value.toFloat() * multiplier
+        def genome_bases = meta.genome_size  // Already parsed to integer in validation
         def coverage_val = meta.coverage.toString().replaceAll(/x$/, '').toInteger()
         def target = (genome_bases * coverage_val).toLong()
-        target_bases = "--target_bases ${target}"
+        filtlong_options << "--target_bases ${target}"
     }
+
+    // Add numeric options if present in meta
+    if (meta.min_length) filtlong_options << "--min_length ${meta.min_length}"
+    if (meta.keep_percent) filtlong_options << "--keep_percent ${meta.keep_percent}"
+    if (meta.min_mean_q) filtlong_options << "--min_mean_q ${meta.min_mean_q}"
+    if (meta.min_window_q) filtlong_options << "--min_window_q ${meta.min_window_q}"
+    if (meta.window_size) filtlong_options << "--window_size ${meta.window_size}"
+
+    // Add weight options
+    if (meta.length_weight) filtlong_options << "--length_weight ${meta.length_weight}"
+    if (meta.mean_q_weight) filtlong_options << "--mean_q_weight ${meta.mean_q_weight}"
+    if (meta.window_q_weight) filtlong_options << "--window_q_weight ${meta.window_q_weight}"
+
+    // Add boolean options
+    if (meta.trim) filtlong_options << "--trim"
+    if (meta.split) filtlong_options << "--split ${meta.split}"
+
+    // Add reference files if provided
+    if (assembly && assembly.name != 'NO_ASSEMBLY') filtlong_options << "-a ${assembly}"
+    if (illumina_1 && illumina_1.name != 'NO_ILLUMINA_1') filtlong_options << "-1 ${illumina_1}"
+    if (illumina_2 && illumina_2.name != 'NO_ILLUMINA_2') filtlong_options << "-2 ${illumina_2}"
+
+    // Join all options
+    def options_str = filtlong_options.join(' ')
 
     """
     filtlong \\
-        $args \\
-        $target_bases \\
+        ${options_str} \\
         $reads \\
         | gzip > ${prefix}.fastq.gz
 

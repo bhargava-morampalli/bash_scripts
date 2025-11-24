@@ -32,7 +32,13 @@ if (params.help) {
     """.stripIndent()
 
     log.info logo
-    log.info paramsHelp("nextflow run main.nf --input samplesheet.csv --genome_size 4.5m --outdir results")
+    log.info paramsHelp("nextflow run main.nf --input samplesheet.csv --outdir results")
+    log.info """
+    Note: All filtlong parameters can be specified either:
+      1. Globally via command line (--genome_size, --min_length, --length_weight, etc.)
+      2. Per-sample in the samplesheet (genome_size, min_length, length_weight columns)
+      3. Per-sample values override global values
+    """.stripIndent()
     exit 0
 }
 
@@ -59,9 +65,6 @@ workflow NFCORE_RNACOVERAGEBENCHMARK {
     // Check mandatory parameters
     if (!params.input) {
         error "Please provide an input samplesheet using --input"
-    }
-    if (!params.genome_size) {
-        error "Please provide genome/transcriptome size using --genome_size (e.g., '4.5m' for 4.5 megabases)"
     }
 
     RNA_COVERAGE_BENCHMARK (
@@ -123,10 +126,13 @@ class WorkflowMain {
         ========================================
         Input samplesheet    : ${params.input}
         Output directory     : ${params.outdir}
-        Genome size          : ${params.genome_size}
         Coverage levels      : ${params.coverage_levels}
-        Min read length      : ${params.min_length}
-        Length weight        : ${params.length_weight}
+        Genome size (global) : ${params.genome_size ?: 'Per-sample'}
+        Min read length      : ${params.min_length ?: 'Per-sample or default'}
+        Length weight        : ${params.length_weight ?: 'Per-sample or default'}
+        ========================================
+        Note: Parameters can be specified globally or per-sample in the samplesheet.
+        Per-sample values override global values.
         ========================================
         """.stripIndent()
         return summary_log

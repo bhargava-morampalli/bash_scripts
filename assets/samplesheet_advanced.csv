@@ -1,0 +1,7 @@
+sample,condition,fastq,genome_size,min_length,length_weight,mean_q_weight,window_q_weight,keep_percent,min_mean_q,trim,assembly,illumina_1,illumina_2
+native_1,native,/path/to/native_1.fastq.gz,4.5m,500,15,2,2,,,yes,,,
+native_2,native,/path/to/native_2.fastq.gz,4.5m,1000,20,3,3,,8,no,,,
+native_3,native,/path/to/native_3.fastq.gz,4.5Mbp,500,10,1,1,95,,,/path/to/ref.fasta,/path/to/illumina_R1.fastq.gz,/path/to/illumina_R2.fastq.gz
+ivt_1,ivt,/path/to/ivt_1.fastq.gz,4500000,500,10,,,,,,,
+ivt_2,ivt,/path/to/ivt_2.fastq.gz,4.5m,800,12,2,2,,7,,,
+ivt_3,ivt,/path/to/ivt_3.fastq.gz,4.5m,500,10,1,1,,,yes,,

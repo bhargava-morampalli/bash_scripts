@@ -1,7 +1,7 @@
-sample,condition,fastq
-native_1,native,/path/to/native_1.fastq.gz
-native_2,native,/path/to/native_2.fastq.gz
-native_3,native,/path/to/native_3.fastq.gz
-ivt_1,ivt,/path/to/ivt_1.fastq.gz
-ivt_2,ivt,/path/to/ivt_2.fastq.gz
-ivt_3,ivt,/path/to/ivt_3.fastq.gz
+sample,condition,fastq,genome_size,min_length,length_weight
+native_1,native,/path/to/native_1.fastq.gz,4.5m,500,10
+native_2,native,/path/to/native_2.fastq.gz,4.5Mbp,500,10
+native_3,native,/path/to/native_3.fastq.gz,4500000,500,10
+ivt_1,ivt,/path/to/ivt_1.fastq.gz,4.5m,500,10
+ivt_2,ivt,/path/to/ivt_2.fastq.gz,4.5m,500,10
+ivt_3,ivt,/path/to/ivt_3.fastq.gz,4.5m,500,10
