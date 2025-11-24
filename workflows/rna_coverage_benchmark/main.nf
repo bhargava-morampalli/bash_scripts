@@ -4,8 +4,8 @@
 ========================================================================================
 */
 
-include { SAMPLESHEET_CHECK } from '../modules/local/samplesheet_check'
-include { FILTLONG          } from '../modules/local/filtlong'
+include { SAMPLESHEET_CHECK } from '../modules/local/samplesheet_check/main'
+include { FILTLONG          } from '../modules/local/filtlong/main'
 
 /*
 ========================================================================================

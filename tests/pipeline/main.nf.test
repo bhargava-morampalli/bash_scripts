@@ -1,0 +1,91 @@
+nextflow_pipeline {
+
+    name "Test Complete Pipeline"
+    script "../../main.nf"
+
+    tag "pipeline"
+    tag "pipeline_rna_coverage_benchmark"
+
+    test("Should run full pipeline with simple input") {
+
+        when {
+            params {
+                input = "${projectDir}/tests/data/samplesheets/test_simple.csv"
+                outdir = "tests/results/simple"
+                genome_size = '2000'
+                min_length = 400
+                length_weight = 10
+                coverage_levels = '5,10'
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            // Check that output directories are created
+            assert path("${params.outdir}/native").exists()
+            assert path("${params.outdir}/ivt").exists()
+
+            // Check that coverage directories are created
+            assert path("${params.outdir}/native/5x").exists()
+            assert path("${params.outdir}/native/10x").exists()
+            assert path("${params.outdir}/ivt/5x").exists()
+            assert path("${params.outdir}/ivt/10x").exists()
+
+            // Check that filtered FASTQ files exist
+            assert path("${params.outdir}/native/5x/test_native_1_5x.fastq.gz").exists()
+            assert path("${params.outdir}/native/10x/test_native_1_10x.fastq.gz").exists()
+            assert path("${params.outdir}/ivt/5x/test_ivt_1_5x.fastq.gz").exists()
+            assert path("${params.outdir}/ivt/10x/test_ivt_1_10x.fastq.gz").exists()
+
+            // Snapshot test
+            assert snapshot(
+                path("${params.outdir}/pipeline_info").list()
+            ).match()
+        }
+
+    }
+
+    test("Should run full pipeline with per-sample parameters") {
+
+        when {
+            params {
+                input = "${projectDir}/tests/data/samplesheets/test_with_params.csv"
+                outdir = "tests/results/per_sample"
+                coverage_levels = '5'
+            }
+        }
+
+        then {
+            assert workflow.success
+
+            // Check outputs
+            assert path("${params.outdir}/native/5x/test_native_1_5x.fastq.gz").exists()
+            assert path("${params.outdir}/ivt/5x/test_ivt_1_5x.fastq.gz").exists()
+
+            // Snapshot test
+            assert snapshot(workflow.out).match()
+        }
+
+    }
+
+    test("Should handle mixed global and per-sample parameters") {
+
+        when {
+            params {
+                input = "${projectDir}/tests/data/samplesheets/test_with_params.csv"
+                outdir = "tests/results/mixed"
+                genome_size = '3000'  // Should be overridden by per-sample values
+                coverage_levels = '5'
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert path("${params.outdir}/native/5x").exists()
+            assert path("${params.outdir}/ivt/5x").exists()
+        }
+
+    }
+
+}

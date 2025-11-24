@@ -55,7 +55,7 @@ WorkflowMain.initialise(workflow, params, log)
 ========================================================================================
 */
 
-include { RNA_COVERAGE_BENCHMARK } from './workflows/rna_coverage_benchmark'
+include { RNA_COVERAGE_BENCHMARK } from './workflows/rna_coverage_benchmark/main'
 
 //
 // WORKFLOW: Run main analysis workflow

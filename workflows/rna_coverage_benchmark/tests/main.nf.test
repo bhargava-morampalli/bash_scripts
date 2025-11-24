@@ -1,0 +1,79 @@
+nextflow_workflow {
+
+    name "Test Workflow RNA_COVERAGE_BENCHMARK"
+    script "../main.nf"
+    workflow "RNA_COVERAGE_BENCHMARK"
+
+    tag "workflows"
+    tag "workflows_local"
+    tag "rna_coverage_benchmark"
+
+    test("Should run complete workflow with simple samplesheet") {
+
+        when {
+            params {
+                outdir = "tests/results"
+                coverage_levels = '5,10'
+                genome_size = '2000'
+            }
+            workflow {
+                """
+                input[0] = Channel.fromPath("${projectDir}/tests/data/samplesheets/test_simple.csv", checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+
+    }
+
+    test("Should run workflow with per-sample parameters") {
+
+        when {
+            params {
+                outdir = "tests/results"
+                coverage_levels = '5,10'
+            }
+            workflow {
+                """
+                input[0] = Channel.fromPath("${projectDir}/tests/data/samplesheets/test_with_params.csv", checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+        }
+
+    }
+
+    test("Should handle mixed global and per-sample parameters") {
+
+        when {
+            params {
+                outdir = "tests/results"
+                coverage_levels = '5'
+                genome_size = '2000'
+                min_length = 400
+                length_weight = 8
+            }
+            workflow {
+                """
+                input[0] = Channel.fromPath("${projectDir}/tests/data/samplesheets/test_with_params.csv", checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            assert snapshot(workflow.out).match()
+            // Verify per-sample parameters override globals
+        }
+
+    }
+
+}

@@ -1,0 +1,86 @@
+nextflow_process {
+
+    name "Test Process FILTLONG"
+    script "../main.nf"
+    process "FILTLONG"
+
+    tag "modules"
+    tag "modules_local"
+    tag "filtlong"
+
+    test("Should filter reads with basic parameters") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test_native_1', condition:'native', coverage:'5', genome_size:2000, min_length:400, length_weight:10 ],
+                    file("${projectDir}/tests/data/fastq/test_native_1.fastq.gz", checkIfExists: true),
+                    file('NO_ASSEMBLY'),
+                    file('NO_ILLUMINA_1'),
+                    file('NO_ILLUMINA_2')
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(
+                process.out.reads,
+                process.out.versions
+            ).match()
+        }
+
+    }
+
+    test("Should filter reads with different parameters per sample") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test_ivt_1', condition:'ivt', coverage:'10', genome_size:2000, min_length:400, length_weight:15, mean_q_weight:2 ],
+                    file("${projectDir}/tests/data/fastq/test_ivt_1.fastq.gz", checkIfExists: true),
+                    file('NO_ASSEMBLY'),
+                    file('NO_ILLUMINA_1'),
+                    file('NO_ILLUMINA_2')
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(
+                process.out.reads,
+                process.out.versions
+            ).match()
+        }
+
+    }
+
+    test("Should handle minimum parameters") {
+
+        when {
+            process {
+                """
+                input[0] = [
+                    [ id:'test_minimal', condition:'native', coverage:'5', genome_size:2000 ],
+                    file("${projectDir}/tests/data/fastq/test_native_1.fastq.gz", checkIfExists: true),
+                    file('NO_ASSEMBLY'),
+                    file('NO_ILLUMINA_1'),
+                    file('NO_ILLUMINA_2')
+                ]
+                """
+            }
+        }
+
+        then {
+            assert process.success
+            assert snapshot(process.out.reads).match()
+        }
+
+    }
+
+}
